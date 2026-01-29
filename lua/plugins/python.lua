@@ -55,24 +55,18 @@ return {
     lazy = false,
     config = function()
       require("venv-selector").setup({
-        -- Auto select virtualenv
-        auto_refresh = true,
-        search_venv_managers = true,
-        search_workspace = true,
-        search = true,
-        dap_enabled = false,
-        
-        -- Support for uv
-        name = {
-          "venv",
-          ".venv",
-          "env",
-          ".env",
+        -- Search settings
+        settings = {
+          search = {
+            anaconda = false,
+            venv = {
+              command = "fd python$ .venv/bin --full-path --no-ignore",
+            },
+          },
+          options = {
+            notify_user_on_venv_activation = true,
+          },
         },
-        
-        -- Look for uv managed environments
-        fd_binary_name = "fd",
-        notify_user_on_activate = true,
       })
     end,
     keys = {
