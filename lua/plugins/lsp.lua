@@ -7,8 +7,10 @@ return {
     { "antosha417/nvim-lsp-file-operations", config = true },
   },
   config = function()
-    -- Enhanced capabilities with nvim-cmp
+    local lspconfig = require("lspconfig")
     local cmp_nvim_lsp = require("cmp_nvim_lsp")
+
+    -- Enhanced capabilities with nvim-cmp
     local capabilities = cmp_nvim_lsp.default_capabilities()
 
     -- Diagnostic signs
@@ -18,11 +20,8 @@ return {
       vim.fn.sign_define(hl, { text = icon, texthl = hl, numhl = "" })
     end
 
-    -- Configure rust-analyzer using new Neovim 0.11 API
-    vim.lsp.config('rust_analyzer', {
-      cmd = { 'rust-analyzer' },
-      filetypes = { 'rust' },
-      root_markers = { 'Cargo.toml', 'rust-project.json' },
+    -- Configure rust-analyzer
+    lspconfig.rust_analyzer.setup({
       capabilities = capabilities,
       settings = {
         ["rust-analyzer"] = {
@@ -48,7 +47,24 @@ return {
       },
     })
 
-    -- Enable rust-analyzer for Rust files
-    vim.lsp.enable('rust_analyzer')
+    -- Configure pyright for Python
+    lspconfig.pyright.setup({
+      capabilities = capabilities,
+      settings = {
+        python = {
+          analysis = {
+            autoSearchPaths = true,
+            diagnosticMode = "openFilesOnly",
+            useLibraryCodeForTypes = true,
+            typeCheckingMode = "basic",
+          },
+        },
+      },
+    })
+
+    -- Configure ruff for Python linting
+    lspconfig.ruff.setup({
+      capabilities = capabilities,
+    })
   end,
 }
