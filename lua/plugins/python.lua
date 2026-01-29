@@ -1,0 +1,125 @@
+-- Python Development Environment (uv + ruff + mypy)
+return {
+  -- Python LSP with ruff and mypy support
+  {
+    "neovim/nvim-lspconfig",
+    opts = function()
+      -- This will be merged with the existing lspconfig setup
+    end,
+    config = function()
+      -- Python LSP configuration using basedpyright (faster than pyright)
+      vim.lsp.config('basedpyright', {
+        cmd = { 'basedpyright-langserver', '--stdio' },
+        filetypes = { 'python' },
+        root_markers = { 'pyproject.toml', 'setup.py', 'setup.cfg', 'requirements.txt', '.git' },
+        settings = {
+          basedpyright = {
+            analysis = {
+              autoSearchPaths = true,
+              diagnosticMode = "openFilesOnly",
+              useLibraryCodeForTypes = true,
+              typeCheckingMode = "basic",
+            },
+          },
+        },
+      })
+
+      -- Ruff LSP for fast linting and formatting
+      vim.lsp.config('ruff', {
+        cmd = { 'ruff', 'server' },
+        filetypes = { 'python' },
+        root_markers = { 'pyproject.toml', 'ruff.toml', '.ruff.toml', '.git' },
+        settings = {
+          args = {},
+        },
+      })
+
+      -- Enable both LSP servers for Python
+      vim.api.nvim_create_autocmd("FileType", {
+        pattern = "python",
+        callback = function()
+          vim.lsp.enable('basedpyright')
+          vim.lsp.enable('ruff')
+        end,
+      })
+    end,
+  },
+
+  -- Python-specific utilities
+  {
+    "linux-cultist/venv-selector.nvim",
+    dependencies = {
+      "neovim/nvim-lspconfig",
+      "nvim-telescope/telescope.nvim",
+    },
+    lazy = false,
+    config = function()
+      require("venv-selector").setup({
+        -- Auto select virtualenv
+        auto_refresh = true,
+        search_venv_managers = true,
+        search_workspace = true,
+        search = true,
+        dap_enabled = false,
+        
+        -- Support for uv
+        name = {
+          "venv",
+          ".venv",
+          "env",
+          ".env",
+        },
+        
+        -- Look for uv managed environments
+        fd_binary_name = "fd",
+        notify_user_on_activate = true,
+      })
+    end,
+    keys = {
+      { "<leader>vs", "<cmd>VenvSelect<cr>", desc = "Select VirtualEnv" },
+      { "<leader>vc", "<cmd>VenvSelectCached<cr>", desc = "Select Cached VirtualEnv" },
+    },
+  },
+
+  -- Python testing support
+  {
+    "nvim-neotest/neotest",
+    dependencies = {
+      "nvim-neotest/nvim-nio",
+      "nvim-lua/plenary.nvim",
+      "nvim-treesitter/nvim-treesitter",
+      "nvim-neotest/neotest-python",
+    },
+    config = function()
+      require("neotest").setup({
+        adapters = {
+          require("neotest-python")({
+            -- Use pytest by default
+            runner = "pytest",
+            -- Support for uv
+            python = function()
+              -- Try to use uv's python if available
+              local handle = io.popen("uv run which python 2>/dev/null")
+              if handle then
+                local result = handle:read("*a")
+                handle:close()
+                if result and result ~= "" then
+                  return vim.trim(result)
+                end
+              end
+              -- Fallback to system python
+              return "python3"
+            end,
+            args = { "--log-level", "DEBUG", "-vv" },
+          }),
+        },
+      })
+    end,
+    keys = {
+      { "<leader>tt", function() require("neotest").run.run() end, desc = "Test Nearest" },
+      { "<leader>tf", function() require("neotest").run.run(vim.fn.expand("%")) end, desc = "Test File" },
+      { "<leader>ts", function() require("neotest").summary.toggle() end, desc = "Test Summary" },
+      { "<leader>to", function() require("neotest").output.open({ enter = true }) end, desc = "Test Output" },
+    },
+  },
+}
