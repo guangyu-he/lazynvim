@@ -80,7 +80,7 @@ curl -LsSf https://astral.sh/uv/install.sh | sh
 # Python tools
 uv tool install ruff
 uv tool install mypy
-uv tool install basedpyright
+uv tool install pyright
 ```
 
 #### Nginx Development (Optional)
