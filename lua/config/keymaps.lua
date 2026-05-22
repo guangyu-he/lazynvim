@@ -46,6 +46,3 @@ keymap.set("n", "<leader>ff", ":Telescope find_files<CR>", { desc = "Find files"
 keymap.set("n", "<leader>fg", ":Telescope live_grep<CR>", { desc = "Live grep" })
 keymap.set("n", "<leader>fb", ":Telescope buffers<CR>", { desc = "Find buffers" })
 keymap.set("n", "<leader>fh", ":Telescope help_tags<CR>", { desc = "Help tags" })
-
--- LSP keymaps (set in LSP config)
--- These will be set when LSP attaches to buffer

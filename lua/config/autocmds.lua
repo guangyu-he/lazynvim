@@ -24,16 +24,6 @@ autocmd("BufWritePre", {
   pattern = "*",
 })
 
--- Auto format on save for Rust files
-local rust_format = augroup("RustFormat", { clear = true })
-autocmd("BufWritePre", {
-  callback = function()
-    vim.lsp.buf.format({ async = false })
-  end,
-  group = rust_format,
-  pattern = "*.rs",
-})
-
 -- Close certain filetypes with q
 local close_with_q = augroup("CloseWithQ", { clear = true })
 autocmd("FileType", {

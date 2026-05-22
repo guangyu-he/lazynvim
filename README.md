@@ -1,468 +1,103 @@
-# Neovim Configuration for Rust, Python & More
+# Neovim: Lightweight Code Reader
 
-A modern, feature-rich Neovim setup optimized for Rust and Python development with AI-powered coding assistance.
+A minimal Neovim setup focused on reading code, with light editing support. No LSP, few dependencies, fast startup.
 
-## 🚀 Features
+## What's Inside
 
-### Core Features
-- **LSP Support** - Full language server protocol integration
-- **Smart Autocompletion** - Context-aware code completion with snippets
-- **Syntax Highlighting** - Treesitter-powered highlighting
-- **Fuzzy Finding** - Fast file and text search (Telescope)
-- **File Explorer** - Neo-tree for project navigation
-- **Git Integration** - Inline git status and diffs
+- **Syntax highlighting** via Treesitter: Python, Rust, HTML/CSS/JS/TS, nginx, shell, JSON/YAML/TOML/XML, SQL, Markdown, Dockerfile, diff, Lua
+- **Fuzzy finder**: Telescope (`<leader>ff` files, `<leader>fg` grep, `<leader>fb` buffers)
+- **File tree**: neo-tree (`<leader>e`)
+- **Formatters** (manual, no format-on-save): `ruff` (Python), `rustfmt` (Rust), `nginxfmt` (nginx) — bind: `<leader>fm`
+- **Copilot** for occasional editing
+- **UI polish**: gruvbox (soft dark), lualine, bufferline, gitsigns, indent-blankline, which-key
+- **Editing**: `gcc` to comment lines
 
-### Language-Specific
+No LSP, no completion popup, no autopairs, no test runners, no venv selectors.
 
-#### Rust 🦀
-- **rust-analyzer** - Full IntelliSense support
-- **Clippy** - Automatic linting on save
-- **rustfmt** - Auto-formatting on save
-- **Cargo.toml** - Dependency management with crates.nvim
+## Prerequisites
 
-#### Python 🐍
-- **basedpyright** - Fast LSP with type checking (mypy)
-- **ruff** - Lightning-fast linting and formatting
-- **uv support** - Modern Python package management
-- **Virtual Environment** - Auto-detection and selection
-- **pytest** - Integrated test runner with neotest
-
-#### Nginx
-- **nginxfmt** - Auto-formatting on save for nginx configs
-
-### AI & Productivity
-- **GitHub Copilot** - AI-powered code suggestions
-- **Auto-formatting** - Format on save for Rust, Python, Nginx
-- **Comment Toggle** - Quick comment/uncomment
-- **Multiple Cursors** - Visual block editing
-- **Which-key** - Interactive keybinding hints
-
-### UI Enhancements
-- **Tokyo Night Theme** - Modern, eye-friendly color scheme
-- **Statusline** - Informative lualine
-- **Buffer Tabs** - Easy buffer management
-- **Git Signs** - Inline git status indicators
-- **Indent Guides** - Visual indentation helpers
-
----
-
-## 📦 Clean Installation
-
-### Prerequisites
-
-#### Required
 ```bash
-# Neovim 0.9.0 or later
-brew install neovim
+# Required
+brew install neovim git ripgrep fd
 
-# Git
-brew install git
-
-# Rust & Cargo
-curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
-rustup component add rust-analyzer rustfmt clippy
-
-# Node.js 18+ (for Copilot)
-brew install node
-
-# ripgrep (for Telescope search)
-brew install ripgrep
-
-# fd (for fast file finding)
-brew install fd
+# Optional — only if you want the formatters
+pip install nginxfmt              # nginx
+# ruff: pip install ruff  OR  uv tool install ruff
+# rustfmt: ships with rustup
 ```
 
-#### Python Development (Optional)
+Copilot needs Node.js >= 18 and a GitHub Copilot account (Free tier works, with monthly completion limits).
+
+## Install
+
 ```bash
-# uv (modern Python package manager)
-curl -LsSf https://astral.sh/uv/install.sh | sh
-
-# Python tools
-uv tool install ruff
-uv tool install mypy
-uv tool install pyright
+# Back up any existing config first
+git clone <this repo> ~/.config/nvim
+nvim   # first run will install plugins via lazy.nvim
 ```
 
-#### Nginx Development (Optional)
-```bash
-# nginxfmt
-pip install nginxfmt
-```
+After first launch:
 
-### Installation Steps
-
-#### 1. Clean Slate
-```bash
-# Remove ALL existing Neovim data
-rm -rf ~/.config/nvim
-rm -rf ~/.local/share/nvim
-rm -rf ~/.local/state/nvim
-rm -rf ~/.cache/nvim
-```
-
-#### 2. Install Configuration
-```bash
-# Extract the configuration
-unzip nvim-rust-config.zip
-
-# Copy to Neovim config directory
-cp -r nvim-rust-config ~/.config/nvim
-```
-
-#### 3. First Launch
-```bash
-# Start Neovim
-nvim
-```
-
-**Wait 2-3 minutes** for lazy.nvim to install all plugins automatically.
-
-#### 4. Setup Copilot
-```vim
-:Copilot auth
-```
-
-Follow the browser prompts to authenticate with GitHub.
-
-#### 5. Verify Installation
-```vim
-:checkhealth
-```
-
-Check for any errors or warnings.
-
----
-
-## ⌨️ Essential Keybindings
-
-**Leader Key:** `Space`
-
-### File Operations
-| Key | Action |
-|-----|--------|
-| `Space + w` | Save file |
-| `Space + q` | Quit |
-| `Space + e` | Toggle file explorer |
-
-### Navigation
-| Key | Action |
-|-----|--------|
-| `Space + ff` | Find files |
-| `Space + fg` | Search text in files |
-| `Space + fb` | Find open buffers |
-| `Ctrl + h/j/k/l` | Navigate between windows |
-| `Shift + h/l` | Previous/next buffer |
-
-### LSP & Code Intelligence
-| Key | Action |
-|-----|--------|
-| `gd` | Go to definition |
-| `gr` | Show references |
-| `gi` | Go to implementation |
-| `K` | Show documentation |
-| `Space + ca` | Code actions (imports, fixes) |
-| `Space + rn` | Rename symbol |
-| `[d` / `]d` | Previous/next diagnostic |
-| `Space + d` | Show line diagnostics |
-
-### GitHub Copilot
-| Key | Action |
-|-----|--------|
-| `Option + l` | Accept suggestion |
-| `Option + ,` | Next suggestion |
-| `Option + .` | Previous suggestion |
-| `Option + -` | Dismiss suggestion |
-| `Option + Enter` | Open suggestion panel |
-
-### Python Development
-| Key | Action |
-|-----|--------|
-| `Space + vs` | Select virtual environment |
-| `Space + tt` | Run nearest test |
-| `Space + tf` | Run all tests in file |
-| `Space + ts` | Toggle test summary |
-
-### Editing
-| Key | Action |
-|-----|--------|
-| `gcc` | Toggle line comment |
-| `gc` + motion | Comment with motion |
-| `Space + f` | Format buffer |
-| `<` / `>` | Indent left/right (visual mode) |
-
-### Search & Replace
-| Key | Action |
-|-----|--------|
-| `/pattern` | Search forward |
-| `n` / `N` | Next/previous match |
-| `:%s/old/new/g` | Replace all in file |
-
-### Visual Block Mode
-| Key | Action |
-|-----|--------|
-| `Ctrl + v` | Enter visual block mode |
-| `I` | Insert at start of lines |
-| `A` | Append at end of lines |
-
----
-
-## 🎯 Quick Start Workflows
-
-### Rust Development
-```bash
-# Create new project
-cargo new my-project
-cd my-project
-
-# Open in Neovim
-nvim src/main.rs
-```
-
-In Neovim:
-1. Start typing - Copilot suggests code
-2. Press `gd` to jump to definitions
-3. Press `Space + ca` for quick fixes
-4. Save - auto-formats with rustfmt
-5. Clippy warnings appear inline
-
-### Python Development with uv
-```bash
-# Create project
-mkdir my-project && cd my-project
-uv init
-uv add requests pytest
-
-# Open in Neovim
-nvim main.py
-```
-
-In Neovim:
-1. Press `Space + vs` to select virtual environment
-2. Write code - get type hints and autocomplete
-3. Save - auto-formats with ruff
-4. Press `Space + tt` to run tests
-
-### Nginx Configuration
-```bash
-# Edit nginx config
-nvim nginx.conf
-```
-
-Save the file - auto-formats with nginxfmt.
-
----
-
-## 🔧 Configuration
-
-### File Structure
-```
-~/.config/nvim/
-├── init.lua                    # Main entry point
-├── lua/
-│   ├── config/
-│   │   ├── options.lua         # Editor settings
-│   │   ├── keymaps.lua         # Key bindings
-│   │   ├── autocmds.lua        # Auto commands
-│   │   └── lsp-keymaps.lua     # LSP keybindings
-│   └── plugins/
-│       ├── lsp.lua             # LSP configuration
-│       ├── copilot.lua         # Copilot setup
-│       ├── python.lua          # Python tools
-│       ├── formatter.lua       # Formatters
-│       ├── rust.lua            # Rust-specific
-│       └── ...                 # Other plugins
-```
-
-### Customization
-
-#### Change Theme
-Edit `lua/plugins/colorscheme.lua`:
-```lua
-return {
-  "catppuccin/nvim",  -- Change to your preferred theme
-  config = function()
-    vim.cmd([[colorscheme catppuccin]])
-  end,
-}
-```
-
-#### Modify Keybindings
-Edit `lua/config/keymaps.lua` or `lua/config/lsp-keymaps.lua`.
-
-#### Add Plugins
-Create a new file in `lua/plugins/`:
-```lua
--- lua/plugins/my-plugin.lua
-return {
-  "author/plugin-name",
-  config = function()
-    -- Plugin configuration
-  end,
-}
-```
-
----
-
-## 🐛 Troubleshooting
-
-### LSP Not Working
-
-**Check LSP status:**
-```vim
-:LspInfo
-```
-
-**Restart LSP:**
-```vim
-:LspRestart
-```
-
-**Verify tools are installed:**
-```bash
-which rust-analyzer
-which ruff
-which basedpyright
-```
-
-### Copilot Not Working
-
-**Check status:**
-```vim
-:Copilot status
-```
-
-**Re-authenticate:**
-```vim
-:Copilot auth
-```
-
-**Check Node.js version:**
-```bash
-node --version  # Should be >= 18.x
-```
-
-### Icons Not Showing
-
-Install a Nerd Font:
-1. Download from https://www.nerdfonts.com/
-2. Recommended: JetBrainsMono Nerd Font
-3. Install and set in your terminal
-
-### Plugins Not Loading
-
-**Sync plugins:**
 ```vim
 :Lazy sync
-```
-
-**Check plugin status:**
-```vim
-:Lazy
-```
-
-### General Health Check
-```vim
+:TSUpdate
+:Copilot auth     " optional
 :checkhealth
 ```
 
----
+## Key Bindings
 
-## 📊 Supported File Types
+Leader is `Space`.
 
-### Full Support (LSP + Formatting + Linting)
-- Rust (`.rs`)
-- Python (`.py`)
-- Nginx (`.conf`, `nginx.conf`)
-- Lua (`.lua`)
-- TOML (`.toml`)
+| Key | Action |
+|---|---|
+| `<leader>w` / `<leader>q` | Save / Quit |
+| `<leader>e` | Toggle file tree |
+| `<leader>ff` / `<leader>fg` / `<leader>fb` | Find files / Live grep / Buffers |
+| `<S-h>` / `<S-l>` | Prev / Next buffer |
+| `<leader>bd` | Close buffer |
+| `<C-h/j/k/l>` | Move between windows |
+| `gcc` / `gc` + motion | Toggle comment |
+| `<leader>fm` | Format buffer (Python/Rust/nginx) |
+| `<Esc>` | Clear search highlight |
+| `<M-l>` / `<M-,>` / `<M-.>` / `<M-->` | Copilot: accept / next / prev / dismiss |
 
-### Syntax Highlighting Only
-- JSON, YAML, Markdown
-- Bash, Shell scripts
-- And many more via Treesitter
+## File Structure
 
----
-
-## 🎓 Learning Tips
-
-### Day 1: Navigation
-- Master `Space + e` (file explorer)
-- Learn `Space + ff` (find files)
-- Practice `gd` (go to definition)
-
-### Day 2: LSP Features
-- Use `K` to see documentation
-- Try `Space + ca` for code actions
-- Practice `Space + rn` for renaming
-
-### Day 3: Copilot
-- Start typing and accept suggestions with `Option + l`
-- Cycle through options with `Option + ,` and `Option + .`
-- Write comments to guide Copilot
-
-### Week 2: Customization
-- Modify keybindings in `lua/config/keymaps.lua`
-- Add your own plugins
-- Adjust settings in `lua/config/options.lua`
-
----
-
-## 🆘 Getting Help
-
-### In Neovim
-- `:help` - Built-in help
-- `Space` + wait - Which-key shows available commands
-- `:Telescope keymaps` - Search all keybindings
-- `:checkhealth` - Diagnostic information
-
-### Resources
-- [Neovim Documentation](https://neovim.io/doc/)
-- [Rust Analyzer Guide](https://rust-analyzer.github.io/)
-- [GitHub Copilot Docs](https://github.com/features/copilot)
-
----
-
-## 📝 Notes
-
-- **Auto-save:** Not enabled by default. Press `Space + w` to save.
-- **Format on save:** Enabled for Rust, Python, and Nginx files.
-- **Virtual environments:** Python LSP automatically uses selected venv.
-- **Cargo projects:** Rust LSP requires a `Cargo.toml` file.
-- **Copilot:** Requires active GitHub Copilot subscription.
-
----
-
-## ⚡ Quick Reference
-
-### Most Used Commands
 ```
-Space + e       → File explorer
-Space + ff      → Find files
-Space + fg      → Search in files
-gd              → Go to definition
-K               → Show docs
-Space + ca      → Code actions
-Option + l      → Accept Copilot
-Space + vs      → Select Python venv
-Space + tt      → Run test
-gcc             → Comment line
-Space + w       → Save
+~/.config/nvim/
+├── init.lua
+└── lua/
+    ├── config/
+    │   ├── options.lua     # Editor options
+    │   ├── keymaps.lua     # Key bindings
+    │   └── autocmds.lua    # yank highlight, trim whitespace, q-to-close
+    └── plugins/
+        ├── colorscheme.lua  # gruvbox
+        ├── treesitter.lua   # syntax highlighting
+        ├── telescope.lua    # fuzzy find
+        ├── neo-tree.lua     # file tree
+        ├── conform.lua      # formatters (manual)
+        ├── copilot.lua      # AI suggestions
+        └── utilities.lua    # gitsigns, lualine, bufferline, ibl, which-key, Comment
 ```
 
-### After Installation
-1. Start Neovim: `nvim`
-2. Authenticate Copilot: `:Copilot auth`
-3. Open a Rust/Python project
-4. Start coding! 🚀
+## Customization
 
----
+- **Theme**: edit `lua/plugins/colorscheme.lua` (change `contrast = "soft"` to `medium`/`hard`).
+- **Add a treesitter language**: append to `ensure_installed` in `lua/plugins/treesitter.lua`.
+- **Add a formatter**: extend `formatters_by_ft` in `lua/plugins/conform.lua`.
 
-## 📜 License
+## Notes
 
-This configuration is provided as-is for personal use and modification.
+- `nvim-treesitter` is pinned to the `master` branch. The default `main` branch is the 1.0 rewrite with a new API (`vim.treesitter.start()` based) that drops `require("nvim-treesitter.configs")`. `master` is archived upstream but still works for syntax highlighting, which is all this config needs.
 
----
+## Troubleshooting
 
-**Enjoy your modern Neovim development environment!** 🎉
-
-For issues or questions, use `:checkhealth` to diagnose problems.
+```vim
+:checkhealth      " general diagnostics
+:Lazy             " plugin status
+:TSInstallInfo    " treesitter parser status
+:ConformInfo      " formatter status
+:Copilot status
+```

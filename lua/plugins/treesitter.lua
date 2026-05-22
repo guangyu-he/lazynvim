@@ -1,11 +1,11 @@
--- Treesitter for Better Syntax Highlighting
+-- Treesitter: syntax highlighting only (no LSP)
 return {
   "nvim-treesitter/nvim-treesitter",
+  branch = "master",      -- pin to legacy API (`main` is 1.0 rewrite)
   build = ":TSUpdate",
   lazy = false,
   priority = 100,
   config = function()
-    -- Check if treesitter is available
     local status_ok, treesitter_configs = pcall(require, "nvim-treesitter.configs")
     if not status_ok then
       vim.notify("nvim-treesitter not loaded yet. Run :Lazy sync and restart", vim.log.levels.WARN)
@@ -14,16 +14,13 @@ return {
 
     treesitter_configs.setup({
       ensure_installed = {
-        "rust",
-        "toml",
-        "lua",
-        "vim",
-        "vimdoc",
-        "markdown",
-        "markdown_inline",
-        "json",
-        "yaml",
-        "bash",
+        "python", "rust",
+        "html", "css", "javascript", "typescript",
+        "nginx",
+        "lua", "vim", "vimdoc",
+        "bash", "json", "toml", "yaml", "xml", "sql",
+        "markdown", "markdown_inline",
+        "dockerfile", "diff",
       },
       auto_install = true,
       highlight = {

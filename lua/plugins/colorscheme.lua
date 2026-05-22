@@ -1,20 +1,19 @@
--- Colorscheme Plugin
+-- Colorscheme: Gruvbox (dark, soft contrast)
 return {
-  "folke/tokyonight.nvim",
+  "ellisonleao/gruvbox.nvim",
   lazy = false,
   priority = 1000,
   config = function()
-    require("tokyonight").setup({
-      style = "night",
-      transparent = false,
-      terminal_colors = true,
-      styles = {
-        comments = { italic = true },
-        keywords = { italic = true },
-        functions = {},
-        variables = {},
+    require("gruvbox").setup({
+      contrast = "soft",
+      italic = {
+        strings = false,
+        comments = true,
+        operators = false,
+        folds = true,
       },
     })
-    vim.cmd([[colorscheme tokyonight]])
+    vim.o.background = "dark"
+    vim.cmd.colorscheme("gruvbox")
   end,
 }

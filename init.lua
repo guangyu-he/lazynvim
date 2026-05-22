@@ -1,4 +1,4 @@
--- Neovim Configuration for Rust Development
+-- Neovim Configuration: lightweight code reader
 -- Bootstrap lazy.nvim
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not vim.loop.fs_stat(lazypath) then
@@ -28,4 +28,3 @@ require("lazy").setup("plugins", {
 require("config.options")
 require("config.keymaps")
 require("config.autocmds")
-require("config.lsp-keymaps")  -- Load LSP keymaps
